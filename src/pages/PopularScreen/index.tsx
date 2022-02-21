@@ -21,7 +21,7 @@ enum API {
   QUERY_STR = '&sort=stars', // 按照点赞排序
 }
 
-const favoriteDao = new FavoritDao('popular');
+export const favoriteDao = new FavoritDao('popular');
 
 function PopularScreen(props: any) {
   const dispatch = useAppDispatch();
@@ -87,7 +87,7 @@ function PopularScreen(props: any) {
 
   const renderFooter = useCallback(() => {
     const hasMore = popular[storeName]?.hasMore;
-    if (!hasMore) {
+    if (!hasMore && !popular[storeName]?.isLoading) {
       return (
         <View style={styles.end}>
           <Text>没有更多啦～</Text>

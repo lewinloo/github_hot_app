@@ -5,6 +5,9 @@ import {useAppSelector} from '@/utils/hooks';
 import {RootStackParamList, RootStackNavigation} from '@/navigator';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {WebView, WebViewNavigation} from 'react-native-webview';
+import {onFavorite} from '@/utils';
+import FavoritDao from '@/config/favoriteDao';
+import {useToast} from 'react-native-toast-notifications';
 
 interface IProps {
   route: RouteProp<RootStackParamList, 'Details'>;
@@ -18,10 +21,15 @@ const DetailScreen: FC<IProps> = props => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const [webviewState, setWebviewState] = useState<WebViewNavigation>();
   const webviewRef = useRef<WebView>(null);
-  const projectModel = route.params?.projectModel;
+  const isFavorite = route.params?.projectModel.isFavorite;
+  const [isStar, setIsStar] = useState(isFavorite);
+  const projectModel = route.params?.projectModel.item;
+  const toast = useToast();
 
   const url = projectModel.html_url ?? TRENDING_URL + projectModel.fullName;
   const title = projectModel.full_name ?? projectModel.fullName;
+  const storeName = projectModel.html_url ? 'popular' : 'trending';
+  const favoriteDao = new FavoritDao(storeName);
 
   const back = useCallback(() => {
     if (webviewState?.canGoBack) {
@@ -31,10 +39,21 @@ const DetailScreen: FC<IProps> = props => {
     }
   }, [props.navigation, webviewState]);
 
+  const handleFavorite = () => {
+    !isStar && toast.show('收藏成功');
+    isStar && toast.show('取消收藏');
+    setIsStar(!isStar);
+    onFavorite(favoriteDao, projectModel, !isStar, storeName);
+  };
+
   const renderRightButtons = () => {
     return (
       <View style={styles.rightBtns}>
-        <IconButton icon="star-outline" style={styles.btnr} />
+        <IconButton
+          onPress={handleFavorite}
+          icon={isStar ? 'star' : 'star-outline'}
+          style={styles.btnr}
+        />
         <IconButton icon="share" />
       </View>
     );

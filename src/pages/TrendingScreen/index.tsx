@@ -31,7 +31,7 @@ enum API {
   URL = 'https://github.com/trending/',
 }
 
-const favoriteDao = new FavoritDao('trending');
+export const favoriteDao = new FavoritDao('trending');
 
 function TrendingScreen(props: IProps) {
   const dispatch = useAppDispatch();
@@ -102,7 +102,7 @@ function TrendingScreen(props: IProps) {
 
   const renderFooter = useCallback(() => {
     const hasMore = trending[storeName]?.hasMore;
-    if (!hasMore) {
+    if (!hasMore && !trending[storeName]?.isLoading) {
       return (
         <View style={styles.end}>
           <Text>没有更多啦～</Text>

@@ -1,16 +1,10 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {FC, memo, useCallback} from 'react';
-import {TrendingItemProps} from '@/config/interfaces';
+import {TrendingItemProps, BaseItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import {useFavoriteButton} from '@/utils/hooks';
 
-interface IProps {
-  item: TrendingItemProps;
-  onSelect?: (item: TrendingItemProps) => void;
-  onFavorite?: (item: TrendingItemProps, isFavorite: boolean) => void;
-}
-
-const TrendingItem: FC<IProps> = props => {
+const TrendingItem: FC<BaseItemProps<TrendingItemProps>> = props => {
   const {onFavorite, item, onSelect} = props!;
   const {fullName, description, meta, starCount, contributors} =
     props.item!.item!;

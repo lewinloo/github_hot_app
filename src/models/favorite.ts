@@ -1,13 +1,11 @@
 import FavoritDao from '@/config/favoriteDao';
-import {TrendingItemProps} from '@/config/interfaces';
 import {delay, wrapProjectModels} from '@/utils';
-import {useFetch} from '@/utils/hooks';
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 
-export interface TrendingState {
+export interface FavoriteState {
   [key: string]: {
-    items: TrendingItemProps[];
-    projectModels?: TrendingItemProps[];
+    items: any[];
+    projectModels?: any[];
     page?: number;
     error?: any;
     hasMore?: boolean;
@@ -16,25 +14,24 @@ export interface TrendingState {
   };
 }
 
-const initialState: TrendingState = {};
+const initialState: FavoriteState = {};
 
 /**
- * 加载趋势模块的数据
+ * 加载最热模块的数据
  */
-export const onLoadTrendingData = createAsyncThunk(
-  'trending/onLoadTrendingData',
+export const onLoadFavoriteData = createAsyncThunk(
+  'favorite/onLoadFavoriteData',
   async (
-    params: {storeName: string; url: string; favoriteDao: FavoritDao},
+    params: {storeName: 'popular' | 'trending'; favoriteDao: FavoritDao},
     {dispatch},
   ) => {
     dispatch(initData({storeName: params.storeName}));
     await delay(1000);
-    const dataStore = useFetch();
-    const res = await dataStore.fetchData(params.url!, 'trending');
+    const items = (await params.favoriteDao.getAllItems()) as [];
     const wrapItems = await wrapProjectModels(
-      res.data,
+      items,
       params.favoriteDao,
-      'trending',
+      params.storeName,
     );
     return {
       storeName: params.storeName,
@@ -46,8 +43,8 @@ export const onLoadTrendingData = createAsyncThunk(
 /**
  * 加载更多
  */
-export const onLoadMoreTrendingData = createAsyncThunk(
-  'trending/onLoadMoreTrendingData',
+export const onLoadMoreData = createAsyncThunk(
+  'favorite/onLoadMoreData',
   async (params: {storeName: string; page: number}, {dispatch}) => {
     dispatch(
       setLoadMoreLoading({loadMoreLoading: true, storeName: params.storeName}),
@@ -57,13 +54,13 @@ export const onLoadMoreTrendingData = createAsyncThunk(
   },
 );
 
-export const trendingSlice = createSlice({
-  name: 'trending',
+export const favoriteSlice = createSlice({
+  name: 'favorite',
   initialState,
   reducers: {
     // 初始化一下数据
     initData(state, action: PayloadAction<{storeName: string}>) {
-      let items: TrendingItemProps[];
+      let items: any[];
       if (state[action.payload.storeName]) {
         items = state[action.payload.storeName].items;
       } else {
@@ -110,15 +107,17 @@ export const trendingSlice = createSlice({
       state[storeName].loadMoreLoading = false;
     },
   },
+  // 建议使用这种方式写，遇到过坑
   extraReducers: builder => {
-    builder.addCase(onLoadTrendingData.fulfilled, (state, {payload}) => {
-      state[payload.storeName].items = payload.items;
-      state[payload.storeName].projectModels = payload.items.slice(0, 10);
+    builder.addCase(onLoadFavoriteData.fulfilled, (state, {payload}) => {
+      const items = payload.items as unknown[] as any[];
+      state[payload.storeName].items = items;
+      state[payload.storeName].projectModels = items.slice(0, 10);
       state[payload.storeName].isLoading = false;
     });
   },
 });
 
-export const {initData, loadMore, setLoadMoreLoading} = trendingSlice.actions;
+export const {initData, loadMore, setLoadMoreLoading} = favoriteSlice.actions;
 
-export default trendingSlice.reducer;
+export default favoriteSlice.reducer;

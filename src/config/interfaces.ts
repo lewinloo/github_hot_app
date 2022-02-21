@@ -136,3 +136,12 @@ interface WrapTrendingItem {
 }
 
 export type TrendingItemProps = Partial<WrapTrendingItem>;
+
+/**
+ * 最热和趋势模块Item 的props
+ */
+export interface BaseItemProps<T> {
+  item: T;
+  onSelect?: (item: T) => void;
+  onFavorite?: (item: T, isFavorite: boolean) => void;
+}

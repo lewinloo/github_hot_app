@@ -36,7 +36,7 @@ class FavoritDao {
         }
         let index = (favoriteKeys as Array<any>).indexOf(key);
         if (isAdd) {
-          index === -1 && favoriteKeys.push(key);
+          index === -1 && favoriteKeys.unshift(key);
         } else {
           index !== -1 && favoriteKeys.splice(index, 1);
         }
@@ -81,28 +81,14 @@ class FavoritDao {
   getAllItems() {
     return new Promise((resolve, reject) => {
       this.getFavoriteKeys()
-        .then(keys => {
-          let items: any = [];
-          if (keys) {
-            AsyncStorage.multiGet(
-              keys as unknown as string[],
-              (_err, stores) => {
-                try {
-                  stores?.forEach(result => {
-                    // let key = result[0];
-                    let value = result[1];
-                    if (value) {
-                      items.push(JSON.parse(value));
-                    }
-                  });
-                } catch (e) {
-                  reject(e);
-                }
-              },
-            );
-          } else {
-            resolve(items);
-          }
+        .then(async keys => {
+          const stores = (await AsyncStorage.multiGet(
+            keys as unknown as string[],
+          )) as [];
+          const items = stores.map(item => {
+            return JSON.parse(item[1]);
+          });
+          resolve(items);
         })
         .catch(err => {
           reject(err);

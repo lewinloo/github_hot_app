@@ -1,16 +1,10 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {FC, memo, useCallback} from 'react';
-import {PopularItemProps} from '@/config/interfaces';
+import {PopularItemProps, BaseItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import {useFavoriteButton} from '@/utils/hooks';
 
-interface IProps {
-  item: PopularItemProps;
-  onSelect?: (item: PopularItemProps) => void;
-  onFavorite?: (item: PopularItemProps, isFavorite: boolean) => void;
-}
-
-const PopularItem: FC<IProps> = props => {
+const PopularItem: FC<BaseItemProps<PopularItemProps>> = props => {
   const {owner, full_name, description, stargazers_count} = props.item!.item!;
   const {FavoriteButton} = useFavoriteButton(props.item, props.onFavorite!);
 

@@ -28,6 +28,7 @@ export const onLoadPopularData = createAsyncThunk(
     {dispatch},
   ) => {
     dispatch(initData({storeName: params.storeName}));
+    await delay(1000);
     const dataStore = useFetch();
     const res = await dataStore.fetchData(params.url!, 'popular');
     const wrapItems = await wrapProjectModels(
@@ -73,7 +74,7 @@ export const popularSlice = createSlice({
         projectModels: items.slice(0, 10),
         isLoading: true,
         loadMoreLoading: false,
-        hasMore: true,
+        hasMore: items.slice(0, 10).length < items.length,
         page: 1,
       };
     },

@@ -2,11 +2,11 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import FavoriteScreen from '@/pages/FavoriteScreen';
 import MyScreen from '@/pages/MyScreen';
 import PopularTopTabs from './PopularTopBars';
 import {useAppSelector} from '@/utils/hooks';
 import TrendingTopTabs from './TrendingTopBars';
+import FavoriteTopTabs from './FavoriteTopBars';
 
 // import {StatusBar} from 'react-native';
 
@@ -48,7 +48,7 @@ const TABS = (
     />
     <Tab.Screen
       name="Favorite"
-      component={FavoriteScreen}
+      component={FavoriteTopTabs}
       options={{
         tabBarLabel: '收藏',
         headerTitle: '收藏',
