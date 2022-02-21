@@ -1,10 +1,8 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {FC, memo, useCallback, useState} from 'react';
+import React, {FC, memo, useCallback} from 'react';
 import {TrendingItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useAppSelector} from '@/utils/hooks';
-import {useToast} from 'react-native-toast-notifications';
+import {useFavoriteButton} from '@/utils/hooks';
 
 interface IProps {
   item: TrendingItemProps;
@@ -13,33 +11,14 @@ interface IProps {
 }
 
 const TrendingItem: FC<IProps> = props => {
-  const theme = useAppSelector(s => s.theme);
-  const [isFavorite, setIsFavorite] = useState(props.item.isFavorite);
+  const {onFavorite, item, onSelect} = props!;
   const {fullName, description, meta, starCount, contributors} =
     props.item!.item!;
-  const toast = useToast();
+  const {FavoriteButton} = useFavoriteButton(item, onFavorite!);
 
   const handlePress = useCallback(() => {
-    const {onSelect, item} = props;
     onSelect?.(item);
-  }, [props]);
-
-  const handleStar = useCallback(() => {
-    const {onFavorite, item} = props;
-    !isFavorite && toast.show('收藏成功');
-    setIsFavorite(!isFavorite);
-    onFavorite?.(item, !isFavorite);
-  }, [isFavorite, props, toast]);
-
-  const renderStar = (
-    <Button onPress={handleStar}>
-      <Icon
-        name={isFavorite ? 'star' : 'star-outline'}
-        size={26}
-        style={{color: theme.themeColor}}
-      />
-    </Button>
-  );
+  }, [onSelect, item]);
 
   if (!props.item) {
     return null;
@@ -71,7 +50,7 @@ const TrendingItem: FC<IProps> = props => {
           <View>
             <Text>Star: {starCount}</Text>
           </View>
-          {renderStar}
+          {FavoriteButton}
         </View>
       </View>
     </Button>

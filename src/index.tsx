@@ -8,11 +8,7 @@ import {hp} from '@/utils';
 function App() {
   return (
     <Provider store={store}>
-      <ToastProvider
-        placement="top"
-        offsetTop={hp(20)}
-        animationType="zoom-in"
-        duration={2000}>
+      <ToastProvider placement="top" offsetTop={hp(20)} duration={2000}>
         <Navigator />
       </ToastProvider>
     </Provider>

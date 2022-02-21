@@ -1,44 +1,23 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {FC, memo, useCallback, useState} from 'react';
+import React, {FC, memo, useCallback} from 'react';
 import {PopularItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useAppSelector} from '@/utils/hooks';
-import {useToast} from 'react-native-toast-notifications';
+import {useFavoriteButton} from '@/utils/hooks';
 
 interface IProps {
   item: PopularItemProps;
   onSelect?: (item: PopularItemProps) => void;
-  onFavorite?: (item: PopularItemProps, isFavorite?: boolean) => void;
+  onFavorite?: (item: PopularItemProps, isFavorite: boolean) => void;
 }
 
 const PopularItem: FC<IProps> = props => {
-  const theme = useAppSelector(s => s.theme);
-  const [isFavorite, setIsFavorite] = useState(props.item.isFavorite);
   const {owner, full_name, description, stargazers_count} = props.item!.item!;
-  const toast = useToast();
+  const {FavoriteButton} = useFavoriteButton(props.item, props.onFavorite!);
 
   const handlePress = useCallback(() => {
     const {onSelect, item} = props;
     onSelect?.(item);
   }, [props]);
-
-  const handleStar = useCallback(() => {
-    const {onFavorite, item} = props;
-    !isFavorite && toast.show('收藏成功');
-    setIsFavorite(!isFavorite);
-    onFavorite?.(item, !isFavorite);
-  }, [isFavorite, props, toast]);
-
-  const renderStar = (
-    <Button onPress={handleStar}>
-      <Icon
-        name={isFavorite ? 'star' : 'star-outline'}
-        size={26}
-        style={{color: theme.themeColor}}
-      />
-    </Button>
-  );
 
   if (!owner) {
     return null;
@@ -59,7 +38,7 @@ const PopularItem: FC<IProps> = props => {
           <View>
             <Text>Star: {stargazers_count}</Text>
           </View>
-          {renderStar}
+          {FavoriteButton}
         </View>
       </View>
     </Button>
