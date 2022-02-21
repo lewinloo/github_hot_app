@@ -23,12 +23,17 @@ const initialState: PopularState = {};
  */
 export const onLoadPopularData = createAsyncThunk(
   'popular/onLoadPopularData',
-  async (params: {storeName: string; url: string; favoriteDao: FavoritDao}) => {
+  async (
+    params: {storeName: string; url: string; favoriteDao: FavoritDao},
+    {dispatch},
+  ) => {
+    dispatch(initData({storeName: params.storeName}));
     const dataStore = useFetch();
     const res = await dataStore.fetchData(params.url!, 'popular');
     const wrapItems = await wrapProjectModels(
       res.data.items,
       params.favoriteDao,
+      'popular',
     );
     return {
       storeName: params.storeName,
@@ -56,7 +61,7 @@ export const popularSlice = createSlice({
   initialState,
   reducers: {
     // 初始化一下数据
-    initData(state, action) {
+    initData(state, action: PayloadAction<{storeName: string}>) {
       let items: PopularItemProps[];
       if (state[action.payload.storeName]) {
         items = state[action.payload.storeName].items;

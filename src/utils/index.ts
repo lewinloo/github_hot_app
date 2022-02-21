@@ -7,6 +7,7 @@ export const delay = (ms: number) =>
 export const wrapProjectModels = async (
   showItems: any[],
   favoriteDao: FavoritDao,
+  flag: 'popular' | 'trending',
 ) => {
   let keys = [];
   try {
@@ -19,19 +20,23 @@ export const wrapProjectModels = async (
     const showItem = showItems[i];
     projectModels.push({
       item: showItem,
-      isFavorite: checkFavorite(showItem, keys),
+      isFavorite: checkFavorite(showItem, keys, flag),
     });
   }
   return projectModels;
 };
 
 // 判断是否是收藏的，从本地存储中查找已收藏的key，再进行判断
-export const checkFavorite = (item: any, keys: any[] = []) => {
+export const checkFavorite = (
+  item: any,
+  keys: any[] = [],
+  flag: 'popular' | 'trending',
+) => {
   if (!keys?.length) {
     return false;
   }
   for (let i = 0, len = keys.length; i < len; i++) {
-    let id = item.id ? item.id : item.fullName;
+    let id = flag === 'popular' ? item.id : item.fullName;
     if (id.toString() === keys[i]) {
       return true;
     }

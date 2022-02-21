@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {FC, memo} from 'react';
+import React, {FC, memo, useCallback, useState} from 'react';
 import {TrendingItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -8,20 +8,33 @@ import {useAppSelector} from '@/utils/hooks';
 interface IProps {
   item: TrendingItemProps;
   onSelect?: (item: TrendingItemProps) => void;
+  onFavorite?: (item: TrendingItemProps, isFavorite: boolean) => void;
 }
 
 const TrendingItem: FC<IProps> = props => {
   const theme = useAppSelector(s => s.theme);
-  const {fullName, description, meta, starCount, contributors} = props.item;
+  const [isFavorite, setIsFavorite] = useState(props.item.isFavorite);
+  const {fullName, description, meta, starCount, contributors} =
+    props.item!.item!;
 
-  const handlePress = () => {
-    const {onSelect} = props;
-    onSelect?.(props.item);
-  };
+  const handlePress = useCallback(() => {
+    const {onSelect, item} = props;
+    onSelect?.(item);
+  }, [props]);
+
+  const handleStar = useCallback(() => {
+    const {onFavorite, item} = props;
+    setIsFavorite(!isFavorite);
+    onFavorite?.(item, !isFavorite);
+  }, [isFavorite, props]);
 
   const renderStar = (
-    <Button>
-      <Icon name="star-outline" size={26} style={{color: theme.themeColor}} />
+    <Button onPress={handleStar}>
+      <Icon
+        name={isFavorite ? 'star' : 'star-outline'}
+        size={26}
+        style={{color: theme.themeColor}}
+      />
     </Button>
   );
 

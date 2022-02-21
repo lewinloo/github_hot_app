@@ -130,4 +130,9 @@ interface TrendingItem {
   createTime: string;
 }
 
-export type TrendingItemProps = Partial<TrendingItem>;
+interface WrapTrendingItem {
+  item: TrendingItem;
+  isFavorite: boolean;
+}
+
+export type TrendingItemProps = Partial<WrapTrendingItem>;

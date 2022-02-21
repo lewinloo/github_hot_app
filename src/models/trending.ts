@@ -1,5 +1,6 @@
+import FavoritDao from '@/config/favoriteDao';
 import {TrendingItemProps} from '@/config/interfaces';
-import {delay} from '@/utils';
+import {delay, wrapProjectModels} from '@/utils';
 import {useFetch} from '@/utils/hooks';
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 
@@ -22,19 +23,22 @@ const initialState: TrendingState = {};
  */
 export const onLoadTrendingData = createAsyncThunk(
   'trending/onLoadTrendingData',
-  async (params: {storeName: string; url: string}, {dispatch}) => {
-    try {
-      dispatch(initData({storeName: params.storeName}));
-      const dataStore = useFetch();
-      const res = await dataStore.fetchData(params.url!, 'trending');
-      return {storeName: params.storeName, items: res.data};
-    } catch (e: any) {
-      console.log(e);
-      return {
-        storeName: params.storeName,
-        error: e,
-      };
-    }
+  async (
+    params: {storeName: string; url: string; favoriteDao: FavoritDao},
+    {dispatch},
+  ) => {
+    dispatch(initData({storeName: params.storeName}));
+    const dataStore = useFetch();
+    const res = await dataStore.fetchData(params.url!, 'trending');
+    const wrapItems = await wrapProjectModels(
+      res.data,
+      params.favoriteDao,
+      'trending',
+    );
+    return {
+      storeName: params.storeName,
+      items: wrapItems,
+    };
   },
 );
 
@@ -57,7 +61,7 @@ export const trendingSlice = createSlice({
   initialState,
   reducers: {
     // 初始化一下数据
-    initData(state, action) {
+    initData(state, action: PayloadAction<{storeName: string}>) {
       let items: TrendingItemProps[];
       if (state[action.payload.storeName]) {
         items = state[action.payload.storeName].items;
@@ -105,16 +109,14 @@ export const trendingSlice = createSlice({
       state[storeName].loadMoreLoading = false;
     },
   },
-  extraReducers: {
-    [onLoadTrendingData.fulfilled.type](state, {payload}) {
+  extraReducers: builder => {
+    builder.addCase(onLoadTrendingData.fulfilled, (state, {payload}) => {
       state[payload.storeName].items = payload.items;
+      console.log('trending => ', payload.items);
+
       state[payload.storeName].projectModels = payload.items.slice(0, 10);
       state[payload.storeName].isLoading = false;
-    },
-    [onLoadTrendingData.rejected.type](state, {payload}) {
-      state[payload.storeName].error = payload.error;
-      state[payload.storeName].isLoading = false;
-    },
+    });
   },
 });
 

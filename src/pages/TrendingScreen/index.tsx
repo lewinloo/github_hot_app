@@ -6,7 +6,7 @@ import {
   FlatList,
   RefreshControl,
 } from 'react-native';
-import React, {memo, useCallback, useEffect} from 'react';
+import React, {memo, useCallback, useState} from 'react';
 import {
   ParamListBase,
   RouteProp,
@@ -14,10 +14,12 @@ import {
 } from '@react-navigation/native';
 import {TrendingItemProps} from '@/config/interfaces';
 import {onLoadTrendingData, onLoadMoreTrendingData} from '@/models/trending';
-import {useAppDispatch, useAppSelector} from '@/utils/hooks';
+import {useAppDispatch, useAppSelector, useMounted} from '@/utils/hooks';
 import TrendingItem from './TrendingItem';
 import {TimeSpan} from './TrendingDialog';
 import {RootStackNavigation} from '@/navigator';
+import FavoritDao from '@/config/favoriteDao';
+import {onFavorite} from '@/utils';
 
 interface IProps {
   route: RouteProp<ParamListBase, string>;
@@ -29,12 +31,14 @@ enum API {
   URL = 'https://github.com/trending/',
 }
 
+const favoriteDao = new FavoritDao('trending');
+
 function TrendingScreen(props: IProps) {
   const dispatch = useAppDispatch();
   const trending = useAppSelector(s => s.trending);
   const theme = useAppSelector(s => s.theme);
   const {navigate} = useNavigation<RootStackNavigation>();
-  const storeName = props.route.name;
+  const [storeName, setStoreName] = useState(props.route.name);
 
   const generateUrl = useCallback(
     (keyword: string) => {
@@ -43,36 +47,43 @@ function TrendingScreen(props: IProps) {
     [props.timeSpan],
   );
 
-  const loadData = useCallback(async () => {
-    try {
-      const url = generateUrl(storeName);
-      await dispatch(onLoadTrendingData({storeName, url}));
-    } catch (e) {
-      console.log(e);
-    }
-  }, [dispatch, storeName, generateUrl]);
-
-  useEffect(() => {
+  useMounted(() => {
+    setStoreName(props.route.name);
     loadData();
-  }, [loadData]);
+  });
+
+  const loadData = useCallback(async () => {
+    const url = generateUrl(storeName);
+    await dispatch(onLoadTrendingData({storeName, url, favoriteDao}));
+  }, [dispatch, storeName, generateUrl]);
 
   const handleSelect = useCallback(
     (item: TrendingItemProps) => {
       navigate('Details', {
-        projectModel: item,
+        projectModel: item.item,
       });
     },
     [navigate],
   );
 
+  const handleFavorite = (item: TrendingItemProps, isFavorite: boolean) => {
+    onFavorite(favoriteDao, item.item, isFavorite, 'trending');
+  };
+
   const renderItem = useCallback(
     ({item}: {item: TrendingItemProps}) => {
-      return <TrendingItem item={item} onSelect={handleSelect} />;
+      return (
+        <TrendingItem
+          item={item}
+          onSelect={handleSelect}
+          onFavorite={handleFavorite}
+        />
+      );
     },
     [handleSelect],
   );
 
-  const keyExtractor = useCallback((item: any) => item.id, []);
+  const keyExtractor = useCallback((item: any) => item.item.id, []);
 
   const handleEndReached = useCallback(() => {
     const hasMore = trending[storeName]?.hasMore;
@@ -113,7 +124,7 @@ function TrendingScreen(props: IProps) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={trending[storeName]?.projectModels}
+        data={trending[storeName]?.projectModels ?? []}
         renderItem={renderItem}
         style={styles.flatList}
         ListFooterComponent={renderFooter}

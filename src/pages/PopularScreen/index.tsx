@@ -8,11 +8,7 @@ import {
 } from 'react-native';
 import React, {memo, useCallback, useState} from 'react';
 import {useAppDispatch, useAppSelector, useMounted} from '@/utils/hooks';
-import {
-  initData,
-  onLoadMorePopularData,
-  onLoadPopularData,
-} from '@/models/popular';
+import {onLoadMorePopularData, onLoadPopularData} from '@/models/popular';
 import PopularItemComp from './PopularItem';
 import {PopularItemProps} from '@/config/interfaces';
 import {useNavigation} from '@react-navigation/native';
@@ -41,7 +37,6 @@ function PopularScreen(props: any) {
 
   useMounted(() => {
     setStoreName(props.route.name);
-    dispatch(initData({storeName}));
     loadData();
   });
 
