@@ -1,4 +1,25 @@
 import FavoritDao from '@/config/favoriteDao';
+import {Dimensions} from 'react-native';
+
+const {width, height} = Dimensions.get('window');
+
+/**
+ * 获取屏幕的百分比宽度
+ * @param percent 百分比
+ * @returns
+ */
+export function wp(percent: number) {
+  return (percent / 100) * width;
+}
+
+/**
+ * 获取屏幕的百分比高度
+ * @param percent 百分比
+ * @returns
+ */
+export function hp(percent: number) {
+  return (percent / 100) * height;
+}
 
 export const delay = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms));

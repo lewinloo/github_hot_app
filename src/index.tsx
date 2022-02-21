@@ -2,11 +2,19 @@ import React from 'react';
 import Navigator from './navigator';
 import {Provider} from 'react-redux';
 import {store} from '@/config/store';
+import {ToastProvider} from 'react-native-toast-notifications';
+import {hp} from '@/utils';
 
 function App() {
   return (
     <Provider store={store}>
-      <Navigator />
+      <ToastProvider
+        placement="top"
+        offsetTop={hp(20)}
+        animationType="zoom-in"
+        duration={2000}>
+        <Navigator />
+      </ToastProvider>
     </Provider>
   );
 }

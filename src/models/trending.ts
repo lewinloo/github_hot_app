@@ -28,6 +28,7 @@ export const onLoadTrendingData = createAsyncThunk(
     {dispatch},
   ) => {
     dispatch(initData({storeName: params.storeName}));
+    await delay(1000);
     const dataStore = useFetch();
     const res = await dataStore.fetchData(params.url!, 'trending');
     const wrapItems = await wrapProjectModels(

@@ -6,7 +6,7 @@ import {
   FlatList,
   RefreshControl,
 } from 'react-native';
-import React, {memo, useCallback, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
   ParamListBase,
   RouteProp,
@@ -49,13 +49,16 @@ function TrendingScreen(props: IProps) {
 
   useMounted(() => {
     setStoreName(props.route.name);
-    loadData();
   });
 
   const loadData = useCallback(async () => {
     const url = generateUrl(storeName);
     await dispatch(onLoadTrendingData({storeName, url, favoriteDao}));
   }, [dispatch, storeName, generateUrl]);
+
+  useEffect(() => {
+    loadData();
+  }, [props.timeSpan, loadData, props.route.name]);
 
   const handleSelect = useCallback(
     (item: TrendingItemProps) => {

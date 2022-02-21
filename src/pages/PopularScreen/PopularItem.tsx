@@ -4,6 +4,7 @@ import {PopularItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAppSelector} from '@/utils/hooks';
+import {useToast} from 'react-native-toast-notifications';
 
 interface IProps {
   item: PopularItemProps;
@@ -15,6 +16,7 @@ const PopularItem: FC<IProps> = props => {
   const theme = useAppSelector(s => s.theme);
   const [isFavorite, setIsFavorite] = useState(props.item.isFavorite);
   const {owner, full_name, description, stargazers_count} = props.item!.item!;
+  const toast = useToast();
 
   const handlePress = useCallback(() => {
     const {onSelect, item} = props;
@@ -23,9 +25,10 @@ const PopularItem: FC<IProps> = props => {
 
   const handleStar = useCallback(() => {
     const {onFavorite, item} = props;
+    !isFavorite && toast.show('收藏成功');
     setIsFavorite(!isFavorite);
     onFavorite?.(item, !isFavorite);
-  }, [isFavorite, props]);
+  }, [isFavorite, props, toast]);
 
   const renderStar = (
     <Button onPress={handleStar}>
