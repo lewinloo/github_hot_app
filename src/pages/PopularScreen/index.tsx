@@ -46,7 +46,7 @@ function PopularScreen(props: any) {
 
   const handleSelect = useCallback(
     (item: PopularItemProps) => {
-      navigate('Details', {projectModel: item.item});
+      navigate('Details', {projectModel: item});
     },
     [navigate],
   );

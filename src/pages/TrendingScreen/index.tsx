@@ -63,7 +63,7 @@ function TrendingScreen(props: IProps) {
   const handleSelect = useCallback(
     (item: TrendingItemProps) => {
       navigate('Details', {
-        projectModel: item.item,
+        projectModel: item,
       });
     },
     [navigate],

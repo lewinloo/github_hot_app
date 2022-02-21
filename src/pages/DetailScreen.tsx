@@ -26,9 +26,9 @@ const DetailScreen: FC<IProps> = props => {
   const projectModel = route.params?.projectModel.item;
   const toast = useToast();
 
-  const url = projectModel.html_url ?? TRENDING_URL + projectModel.fullName;
-  const title = projectModel.full_name ?? projectModel.fullName;
-  const storeName = projectModel.html_url ? 'popular' : 'trending';
+  const url = projectModel?.html_url ?? TRENDING_URL + projectModel.fullName;
+  const title = projectModel?.full_name ?? projectModel.fullName;
+  const storeName = projectModel?.html_url ? 'popular' : 'trending';
   const favoriteDao = new FavoritDao(storeName);
 
   const back = useCallback(() => {
