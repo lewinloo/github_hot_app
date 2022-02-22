@@ -28,7 +28,10 @@ const MenuItem: FC<IProps> = props => {
   };
   return (
     <View>
-      <Button onPress={handlePress} style={[styles.container, props.style]}>
+      <Button
+        activeOpacity={0.6}
+        onPress={handlePress}
+        style={[styles.container, props.style]}>
         <View style={styles.left}>
           {props.Icon ? (
             <props.Icon
@@ -60,7 +63,7 @@ const MenuItem: FC<IProps> = props => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 54,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'space-between',
