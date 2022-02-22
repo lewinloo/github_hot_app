@@ -3,6 +3,7 @@ import React, {FC, memo, useCallback} from 'react';
 import {PopularItemProps, BaseItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import {useFavoriteButton} from '@/utils/hooks';
+import {wp} from '@/utils';
 
 const PopularItem: FC<BaseItemProps<PopularItemProps>> = props => {
   const {owner, full_name, description, stargazers_count} = props.item!.item!;
@@ -42,6 +43,7 @@ const PopularItem: FC<BaseItemProps<PopularItemProps>> = props => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+    minWidth: wp(97),
     padding: 10,
     marginHorizontal: 5,
     marginVertical: 3,

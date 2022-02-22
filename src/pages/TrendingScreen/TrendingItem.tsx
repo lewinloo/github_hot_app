@@ -3,6 +3,7 @@ import React, {FC, memo, useCallback} from 'react';
 import {TrendingItemProps, BaseItemProps} from '@/config/interfaces';
 import {Button} from '@/components';
 import {useFavoriteButton} from '@/utils/hooks';
+import {wp} from '@/utils';
 
 const TrendingItem: FC<BaseItemProps<TrendingItemProps>> = props => {
   const {onFavorite, item, onSelect} = props!;
@@ -53,7 +54,7 @@ const TrendingItem: FC<BaseItemProps<TrendingItemProps>> = props => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    minWidth: wp(97),
     backgroundColor: 'white',
     padding: 10,
     marginHorizontal: 5,

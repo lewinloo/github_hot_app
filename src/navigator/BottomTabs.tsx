@@ -26,9 +26,7 @@ const TABS = (
       component={PopularTopTabs}
       options={{
         tabBarLabel: '最热',
-        headerTitle: '最热',
         // 隐藏首页的header
-        // headerShown: false,
         tabBarIcon: ({color, size}) => {
           return <Icon name="whatshot" color={color} size={size} />;
         },
@@ -39,7 +37,6 @@ const TABS = (
       component={TrendingTopTabs}
       options={{
         tabBarLabel: '趋势',
-        headerTitle: '趋势',
         // 隐藏首页的header
         tabBarIcon: ({color, size}) => {
           return <Icon name="trending-up" color={color} size={size} />;
@@ -51,7 +48,6 @@ const TABS = (
       component={FavoriteTopTabs}
       options={{
         tabBarLabel: '收藏',
-        headerTitle: '收藏',
         // 隐藏首页的header
         tabBarIcon: ({color, size}) => {
           return <Icon name="favorite" color={color} size={size} />;
@@ -63,8 +59,8 @@ const TABS = (
       component={MyScreen}
       options={{
         tabBarLabel: '我的',
-        headerTitle: '我的',
         // 隐藏首页的header
+        // headerShown: true,
         tabBarIcon: ({color, size}) => {
           return <Entypo name="user" color={color} size={size} />;
         },

@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
   flatList: {
     marginTop: 5,
   },
-
   end: {
     alignItems: 'center',
     paddingVertical: 10,
