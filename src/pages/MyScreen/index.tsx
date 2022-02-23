@@ -5,8 +5,16 @@ import {useAppDispatch, useAppSelector} from '@/utils/hooks';
 import {GROUP_MENU, MORE_MENU} from '@/config/moreMenu';
 import CustomThemeModal from './CustomThemeModal';
 import {setModalVisible} from '@/models/theme';
+import {RootStackParamList, RootStackNavigation} from '@/navigator';
+import {RouteProp} from '@react-navigation/native';
 
-function MyScreen() {
+interface IProps {
+  route: RouteProp<RootStackParamList, any>;
+  navigation: RootStackNavigation;
+}
+
+function MyScreen(props: IProps) {
+  const {navigation} = props;
   const theme = useAppSelector(s => s.theme);
   const dispatch = useAppDispatch();
 
@@ -15,6 +23,10 @@ function MyScreen() {
     switch (key) {
       case MORE_MENU.Custom_Theme.name:
         dispatch(setModalVisible({isShow: true}));
+        break;
+      case MORE_MENU.Tutorial.name:
+        const url = 'https://coding.m.imooc.com/classindex.html?cid=89';
+        navigation.navigate('Webview', {title: key, url});
         break;
     }
   };
@@ -38,6 +50,7 @@ function MyScreen() {
           iconSize={40}
         />
         <MenuItem
+          onPress={handleClick}
           title={MORE_MENU.Tutorial.name}
           Icon={MORE_MENU.Tutorial.Icons}
           iconName={MORE_MENU.Tutorial.icon}

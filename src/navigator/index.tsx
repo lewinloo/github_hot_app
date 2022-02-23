@@ -8,6 +8,7 @@ import BottomTabs from './BottomTabs';
 import {NavigationContainer} from '@react-navigation/native';
 import WelcomeScreen from '@/pages/WelcomeScreen';
 import DetailScreen from '@/pages/DetailScreen';
+import WebviewScreen from '@/pages/WebviewScreen';
 
 // 这个类型别名在路由跳转的时候会有给到提示我们
 export type RootStackParamList = {
@@ -15,6 +16,10 @@ export type RootStackParamList = {
   Welcome: undefined;
   Details: {
     projectModel: any;
+  };
+  Webview: {
+    title: string;
+    url: string;
   };
   // Category: undefined;
 };
@@ -38,6 +43,7 @@ function Navigator() {
         <Stack.Screen name="Home" component={BottomTabs} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Details" component={DetailScreen} />
+        <Stack.Screen name="Webview" component={WebviewScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
